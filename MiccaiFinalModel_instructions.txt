@@ -1,0 +1,14 @@
+To get the MICCAI final model, it is necessary to download the model from Git.
+
+
+The file size is quite large, about 270mb. However, Github seems to have an issue when trying:
+
+wget https://github.com/downloads/user/repository/filename
+
+
+
+Instead, go to: https://downgit.github.io/#/home and download by entering the url: https://github.com/cuMIP/ctImage/blob/main/MiccaiFinalModel.dat
+
+
+
+Alternatively, the model can be found here: https://drive.google.com/file/d/1Zu02D4yMeUZJGVPY-o2jIK_WmVtAn3GM/view?usp=sharing
