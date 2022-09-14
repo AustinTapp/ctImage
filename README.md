@@ -19,7 +19,8 @@ This repository contains the final model as described in the manuscript. The mod
 
 
 ## Using the code
-Due to data privacy agreements, we are not able to share any example CT Image. Our example inference codes are based on the data processing script to generate masked normalzied CT images based on MHA graphic data files (.mha). If you are not using the same data format for the CT images, you could generate input array based on your own choice. Our model requires input image arrays with size of 96x96x96 and intensity normalized to the range of 0-1.
+Due to data privacy agreements, we are not able to share any example CT Image. Our example inference codes are based on the data processing script to generate masked normalzied CT images based on MHA graphic data files (.mha). 
+If you are not using the same data format for the CT images, you could generate input array based on your own choice. Our model requires input image arrays with size of 96x96x96 and intensity normalized to the range of 0-1.
 
 ### Quick summary
 **Input**: MHA graphic files.
@@ -48,13 +49,12 @@ imageData = ModelConfiguration.adaptData(ctImage, device)
 landmarks, boneLabels = ModelConfiguration.runModel(model, ctImage, binaryImage, imageData)
 
 ```
-*When using this code, be sure to assign corret path containing a valid MHA graphic file of a CT image to the ```ctImage```.*
+*When using this code, be sure to assign correct path containing a valid MHA graphic file of a CT image to the ```ctImage```.*
 
 ### The workflow
 
 - The **CreateBoneMask** function creates a binary mask for the CT image.
 - The **ResampleAndMaskImage** function resamples and masks the CT image to the correct size and normalizes the intensity.
-- The **getDevice** function specifies the device for the torch model.
 - The **getDevice** function specifies the device for the torch model.
 - The **adaptModel** and **adaptData** functions prepares the model and data for inference.
 - The **runModel** function generates landmark and bone labeling predictions and resample them to the original CT image space.
