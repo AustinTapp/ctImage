@@ -96,7 +96,7 @@ def ResampleAndMaskImage(ctImage, binaryImage, outputImageSize = np.array([96, 9
     convexMaskImage = sitk.GetImageFromArray(convexMask)
     convexMaskImage.CopyInformation(binaryImage)
     convexMaskImage = sitk.Cast(convexMaskImage, sitk.sitkUInt32)
-    
+
     normalize = tio.RescaleIntensity(out_min_max = (0, 1), p = 1)
     filter = sitk.MaskImageFilter()
     ctImage = normalize(ctImage)
@@ -107,6 +107,7 @@ def ResampleAndMaskImage(ctImage, binaryImage, outputImageSize = np.array([96, 9
 
     templateImage.SetOrigin(ctImage.GetOrigin())
     spacing = np.array(ctImage.GetSpacing())*np.array(ctImage.GetSize())/outputImageSize
+
     templateImage.SetSpacing(spacing)
 
     transform = sitk.AffineTransform(3)

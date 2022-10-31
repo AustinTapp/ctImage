@@ -60,3 +60,6 @@ landmarks, boneLabels = ModelConfiguration.runModel(model, ctImage, binaryImage,
 - The **runModel** function generates landmark and bone labeling predictions and resample them to the original CT image space.
 
 If you have any questions, please email Jiawei Liu at jiawei.liu@cuanschutz.edu
+
+*NOTE: something occurs with DICOM2niix converted files related to the initialization of their origin and reorientation
+if wishing to run DICOMS, convert with slicer or ITK snap, NOT dicom2nixx
