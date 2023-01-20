@@ -6,17 +6,19 @@ import torchio as tio
 import skimage
 import skimage.measure
 
+
 def FloodFillHull(image):
     points = np.transpose(np.where(image))
     hull = ConvexHull(points)
-    deln = Delaunay(points[hull.vertices]) 
-    idx = np.stack(np.indices(image.shape), axis = -1)
+    deln = Delaunay(points[hull.vertices])
+    idx = np.stack(np.indices(image.shape), axis=-1)
     out_idx = np.nonzero(deln.find_simplex(idx) + 1)
     out_img = np.zeros(image.shape)
     out_img[out_idx] = 1
     return out_img
 
-def CreateHeadMask(ctImage, hounsfieldThreshold = -200):
+
+def CreateHeadMask(ctImage, hounsfieldThreshold=-200):
     """
     Returns a binary image mask of the head from an input CT image
 
@@ -28,7 +30,7 @@ def CreateHeadMask(ctImage, hounsfieldThreshold = -200):
     headMask = (headMask > hounsfieldThreshold).astype(np.uint8)
 
     headMask = skimage.measure.label(headMask)
-    largestLabel = np.argmax(np.bincount(headMask.flat)[1:])+1
+    largestLabel = np.argmax(np.bincount(headMask.flat)[1:]) + 1
     headMask = (headMask == largestLabel).astype(np.uint8)
 
     headMask = sitk.GetImageFromArray(headMask)
@@ -37,6 +39,7 @@ def CreateHeadMask(ctImage, hounsfieldThreshold = -200):
     headMask.SetDirection(ctImage.GetDirection())
 
     return headMask
+
 
 def CreateBoneMask(ctImage, headMaskImage=None, minimumThreshold=100, maximumThreshold=200, verbose=False):
     """
@@ -53,7 +56,6 @@ def CreateBoneMask(ctImage, headMaskImage=None, minimumThreshold=100, maximumThr
 
         headMaskImage = CreateHeadMask(ctImage)
 
-
     ctImageArray = sitk.GetArrayFromImage(ctImage)
     headMaskImageArray = sitk.GetArrayViewFromImage(headMaskImage)
 
@@ -63,7 +65,7 @@ def CreateBoneMask(ctImage, headMaskImage=None, minimumThreshold=100, maximumThr
     # Extracting the bones
     minObjects = np.inf
     optimalThreshold = 0
-    for threshold in range(minimumThreshold, maximumThreshold+1, 10):
+    for threshold in range(minimumThreshold, maximumThreshold + 1, 10):
 
         if verbose:
             print('Optimizing skull segmentation. Threshold {:03d}.'.format(threshold), end='\r')
@@ -76,13 +78,14 @@ def CreateBoneMask(ctImage, headMaskImage=None, minimumThreshold=100, maximumThr
             optimalThreshold = threshold
     if verbose:
         print('The optimal threshold for skull segmentation is {:03d}.'.format(optimalThreshold))
-    
+
+    #ctImageArray = ctImageArray >= 140
     ctImageArray = ctImageArray >= optimalThreshold
 
     ctImageArray = skimage.measure.label(ctImageArray)
-    largestLabel = np.argmax(np.bincount(ctImageArray.flat)[1:])+1
+    largestLabel = np.argmax(np.bincount(ctImageArray.flat)[1:]) + 1
     ctImageArray = (ctImageArray == largestLabel).astype(np.uint)
-    
+
     ctImageArray = sitk.GetImageFromArray(ctImageArray)
     ctImageArray.SetOrigin(ctImage.GetOrigin())
     ctImageArray.SetSpacing(ctImage.GetSpacing())
@@ -90,14 +93,15 @@ def CreateBoneMask(ctImage, headMaskImage=None, minimumThreshold=100, maximumThr
 
     return ctImageArray
 
-def ResampleAndMaskImage(ctImage, binaryImage, outputImageSize = np.array([96, 96, 96], dtype=np.int16)):
+
+def ResampleAndMaskImage(ctImage, binaryImage, outputImageSize=np.array([96, 96, 96], dtype=np.int16)):
     binary = sitk.GetArrayFromImage(binaryImage)
     convexMask = FloodFillHull(binary)
     convexMaskImage = sitk.GetImageFromArray(convexMask)
     convexMaskImage.CopyInformation(binaryImage)
     convexMaskImage = sitk.Cast(convexMaskImage, sitk.sitkUInt32)
 
-    normalize = tio.RescaleIntensity(out_min_max = (0, 1), p = 1)
+    normalize = tio.RescaleIntensity(out_min_max=(0, 1), p=1)
     filter = sitk.MaskImageFilter()
     ctImage = normalize(ctImage)
     ctImage = filter.Execute(ctImage, convexMaskImage)
@@ -106,7 +110,7 @@ def ResampleAndMaskImage(ctImage, binaryImage, outputImageSize = np.array([96, 9
     templateImage = sitk.GetImageFromArray(templateImageArray)
 
     templateImage.SetOrigin(ctImage.GetOrigin())
-    spacing = np.array(ctImage.GetSpacing())*np.array(ctImage.GetSize())/outputImageSize
+    spacing = np.array(ctImage.GetSpacing()) * np.array(ctImage.GetSize()) / outputImageSize
 
     templateImage.SetSpacing(spacing)
 
@@ -114,4 +118,4 @@ def ResampleAndMaskImage(ctImage, binaryImage, outputImageSize = np.array([96, 9
     transform.SetIdentity()
     resampledCTImage = sitk.Resample(ctImage, templateImage, transform.GetInverse(), sitk.sitkLinear)
 
-    return(resampledCTImage)
+    return (resampledCTImage)
