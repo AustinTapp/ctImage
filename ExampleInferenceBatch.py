@@ -40,5 +40,6 @@ if __name__ == '__main__':
         filepath = os.path.join(data_dir, filename)
         try:
             Segment(filepath, filename, save_dir)
-        except:
+        except Exception as e:
+            print(f"For case {filename}, an error occurred:", e)
             continue
