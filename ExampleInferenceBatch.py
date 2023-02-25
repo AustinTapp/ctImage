@@ -25,7 +25,7 @@ def Segment(image_path, filename, save_directory):
 
     landmarks, all_seven_labels = ModelConfiguration.runModel(model, ctImage, binaryImage, imageData)
 
-    sitk.WriteImage(all_seven_labels, image_name + "_labeled.mha")
+    sitk.WriteImage(all_seven_labels, image_name + "_labeled.nii.gz")
 
     point_writer = vtk.vtkXMLPolyDataWriter()
     point_writer.SetFileName(image_name + "_CTLPoints.vtp")
@@ -34,8 +34,8 @@ def Segment(image_path, filename, save_directory):
 
 
 if __name__ == '__main__':
-    data_dir = "D:\\Data\\CNH_Paired\\NoBedCTs"
-    save_dir = "D:\\Data\\CNH_Paired\\nbCTsegs"
+    data_dir = "D:\\Data\\CNH_Paired\\Ready\\ReorientedCT"
+    save_dir = "D:\\Data\\CNH_Paired\\Ready\\ROCTsegs"
     for filename in os.listdir(data_dir):
         filepath = os.path.join(data_dir, filename)
         try:
