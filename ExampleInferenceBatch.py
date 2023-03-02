@@ -34,8 +34,8 @@ def Segment(image_path, filename, save_directory):
 
 
 if __name__ == '__main__':
-    data_dir = "D:\\Data\\CNH_Paired\\Ready\\ReorientedCT"
-    save_dir = "D:\\Data\\CNH_Paired\\Ready\\ROCTsegs"
+    data_dir = "D:\\Data\\CNH_Paired\\NoBedCTs"
+    save_dir = "D:\\Data\\CNH_Paired\\nbCTsegs"
     for filename in os.listdir(data_dir):
         filepath = os.path.join(data_dir, filename)
         try:
